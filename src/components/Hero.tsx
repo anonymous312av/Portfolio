@@ -63,7 +63,7 @@ const Hero = () => {
           className="mb-6"
         >
           <span className="inline-block px-4 py-2 rounded-full glass-effect text-sm text-muted-foreground font-body">
-            B.Tech Mechanical Engineering • Core Engineer • Designer
+            Mechanical Engineer • Designer • Automation Enthusiast
           </span>
         </motion.div>
 
@@ -73,8 +73,7 @@ const Hero = () => {
           transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="font-display text-hero mb-8"
         >
-          <span className="block">ANMOL</span>
-          <span className="block text-gradient glow-text">VERMA</span>
+          <span className="block text-gradient glow-text">ANMOL VERMA</span>
         </motion.h1>
 
         <motion.p
