@@ -1,34 +1,59 @@
+import { motion } from "framer-motion";
+import { Github, Linkedin, Mail } from "lucide-react";
+
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { name: "LinkedIn", href: "#" },
-    { name: "Dribbble", href: "#" },
-    { name: "Twitter", href: "#" },
-    { name: "GitHub", href: "#" },
+    { icon: Github, href: "https://github.com", label: "GitHub" },
+    { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
+    { icon: Mail, href: "mailto:anmolvermahere@gmail.com", label: "Email" },
   ];
 
   return (
-    <footer className="py-12 px-6 md:px-12 lg:px-20 border-t border-border">
+    <footer className="py-8 px-6 border-t border-border">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* Logo/Name */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="font-display text-xl font-bold"
+          >
+            <span className="text-gradient">AV</span>
+          </motion.div>
+
           {/* Copyright */}
-          <div className="text-muted-foreground text-body-sm font-body">
-            © {currentYear} Portfolio. Crafted with intention.
-          </div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-muted-foreground text-body-sm font-body"
+          >
+            © {currentYear} Anmol Verma. Designed & Built with passion.
+          </motion.p>
 
           {/* Social Links */}
-          <nav className="flex flex-wrap gap-6">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex items-center gap-4"
+          >
             {socialLinks.map((link) => (
               <a
-                key={link.name}
+                key={link.label}
                 href={link.href}
-                className="text-muted-foreground text-body-sm font-body hover:text-foreground transition-colors duration-200"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                aria-label={link.label}
               >
-                {link.name}
+                <link.icon className="w-5 h-5" />
               </a>
             ))}
-          </nav>
+          </motion.div>
         </div>
       </div>
     </footer>
