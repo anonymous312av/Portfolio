@@ -1,95 +1,88 @@
-import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
-interface SkillCategory {
-  title: string;
-  skills: string[];
-}
-
-const skillCategories: SkillCategory[] = [
-  {
-    title: "Design",
-    skills: ["UI/UX Design", "Brand Identity", "Design Systems", "Prototyping", "Motion Design"],
-  },
-  {
-    title: "Development",
-    skills: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion"],
-  },
-  {
-    title: "Tools",
-    skills: ["Figma", "Webflow", "Framer", "After Effects", "Blender"],
-  },
-];
+const skills = {
+  "CAD & Design": [
+    { name: "SolidWorks", level: 90 },
+    { name: "AutoCAD", level: 85 },
+    { name: "ANSYS", level: 75 },
+    { name: "Blender", level: 60 },
+  ],
+  "Embedded & IoT": [
+    { name: "Arduino", level: 90 },
+    { name: "ESP32/ESP8266", level: 88 },
+    { name: "Raspberry Pi", level: 70 },
+    { name: "Sensors Integration", level: 85 },
+  ],
+  "Software & Tools": [
+    { name: "Python", level: 75 },
+    { name: "Firebase", level: 70 },
+    { name: "MQTT/HTTP", level: 80 },
+    { name: "Tinkercad", level: 85 },
+  ],
+};
 
 const Skills = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section
-      ref={sectionRef}
-      id="skills"
-      className="section-padding px-6 md:px-12 lg:px-20 bg-surface-elevated"
-    >
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
-          {/* Label */}
-          <div className="lg:col-span-3">
-            <span
-              className={`text-muted-foreground text-body-sm font-body tracking-wide uppercase transition-all duration-700 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-              }`}
-            >
-              Skills & Tools
-            </span>
-          </div>
+    <section ref={ref} id="skills" className="section-padding px-6 relative">
+      {/* Background elements */}
+      <div className="absolute top-1/2 right-0 w-1/3 h-96 bg-accent/5 rounded-full blur-3xl -translate-y-1/2" />
+      
+      <div className="max-w-6xl mx-auto relative">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <span className="text-primary text-body-sm font-body tracking-widest uppercase mb-4 block">
+            Technical Arsenal
+          </span>
+          <h2 className="font-display text-display-xl">
+            Skills & <span className="text-gradient">Expertise</span>
+          </h2>
+        </motion.div>
 
-          {/* Content */}
-          <div className="lg:col-span-9">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              {skillCategories.map((category, categoryIndex) => (
-                <div
-                  key={category.title}
-                  className={`transition-all duration-700 ${
-                    isVisible
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-8"
-                  }`}
-                  style={{ transitionDelay: `${(categoryIndex + 1) * 150}ms` }}
-                >
-                  <h3 className="font-display text-lg text-foreground mb-6">
-                    {category.title}
-                  </h3>
-                  <ul className="space-y-3">
-                    {category.skills.map((skill) => (
-                      <li
-                        key={skill}
-                        className="text-muted-foreground text-body-sm font-body"
-                      >
-                        {skill}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {Object.entries(skills).map(([category, items], categoryIndex) => (
+            <motion.div
+              key={category}
+              initial={{ opacity: 0, y: 40 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: categoryIndex * 0.15 }}
+              className="glass-effect rounded-2xl p-6"
+            >
+              <h3 className="font-display text-lg text-foreground mb-6 pb-3 border-b border-border">
+                {category}
+              </h3>
+              <div className="space-y-4">
+                {items.map((skill, index) => (
+                  <motion.div
+                    key={skill.name}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={isInView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 0.4, delay: categoryIndex * 0.15 + index * 0.1 }}
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-body-sm text-foreground font-body">{skill.name}</span>
+                      <span className="text-body-sm text-muted-foreground font-body">{skill.level}%</span>
+                    </div>
+                    <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={isInView ? { width: `${skill.level}%` } : {}}
+                        transition={{ duration: 1, delay: categoryIndex * 0.15 + index * 0.1 + 0.3 }}
+                        className="h-full bg-gradient-primary rounded-full"
+                      />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

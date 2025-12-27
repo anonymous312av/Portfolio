@@ -1,63 +1,124 @@
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowDown } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
+import { ArrowDown, Download } from "lucide-react";
 
 const Hero = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  
+  const springConfig = { damping: 25, stiffness: 150 };
+  const x = useSpring(mouseX, springConfig);
+  const y = useSpring(mouseY, springConfig);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+      mouseX.set((clientX - innerWidth / 2) / 25);
+      mouseY.set((clientY - innerHeight / 2) / 25);
+      setMousePosition({ x: clientX, y: clientY });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+
   const scrollToAbout = () => {
     document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-end pb-20 md:pb-32 px-6 md:px-12 lg:px-20">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={heroBg}
-          alt="Abstract warm gradient background"
-          className="w-full h-full object-cover opacity-40"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
-      </div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-glow opacity-50" />
       
+      {/* Floating orbs with parallax */}
+      <motion.div
+        style={{ x, y }}
+        className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse-glow"
+      />
+      <motion.div
+        style={{ x: useTransform(x, (val) => val * -1.5), y: useTransform(y, (val) => val * -1.5) }}
+        className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-pulse-glow"
+      />
+      
+      {/* Grid pattern overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px'
+        }}
+      />
+
       {/* Content */}
-      <div className="relative z-10 max-w-6xl">
-        <div className="mb-6 animate-fade-up">
-          <span className="text-muted-foreground text-body-sm font-body tracking-wide uppercase">
-            Creative Developer & Designer
+      <div className="relative z-10 text-center px-6 max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-6"
+        >
+          <span className="inline-block px-4 py-2 rounded-full glass-effect text-sm text-muted-foreground font-body">
+            B.Tech Mechanical Engineering • Core Engineer • Designer
           </span>
-        </div>
-        
-        <h1 className="font-display text-display-xl mb-8 animate-fade-up-delay-1">
-          <span className="block">I craft digital</span>
-          <span className="block">
-            experiences that{" "}
-            <span className="text-gradient">resonate</span>
-          </span>
-        </h1>
-        
-        <p className="text-muted-foreground text-body-lg max-w-xl mb-12 font-body animate-fade-up-delay-2">
-          Blending strategy, design, and technology to create memorable 
-          digital products that drive meaningful connections.
-        </p>
-        
-        <div className="flex flex-wrap gap-4 animate-fade-up-delay-3">
-          <Button variant="hero" size="lg">
-            View Selected Work
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="font-display text-hero mb-8"
+        >
+          <span className="block">ANMOL</span>
+          <span className="block text-gradient glow-text">VERMA</span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="text-muted-foreground text-body-lg max-w-2xl mx-auto mb-12 font-body"
+        >
+          Mechanical Designer & Automation Engineer crafting innovative solutions 
+          through CAD, IoT, and embedded systems. Turning ideas into reality.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-wrap justify-center gap-4"
+        >
+          <Button variant="hero" size="lg" onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}>
+            View Projects
           </Button>
           <Button variant="hero-outline" size="lg">
-            Get in Touch
+            <Download className="w-4 h-4 mr-2" />
+            Resume
           </Button>
-        </div>
+        </motion.div>
       </div>
-      
+
       {/* Scroll indicator */}
-      <button 
+      <motion.button
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
         onClick={scrollToAbout}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground hover:text-foreground transition-colors duration-300 animate-fade-up-delay-3"
-        aria-label="Scroll to about section"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 text-muted-foreground hover:text-primary transition-colors"
+        aria-label="Scroll to about"
       >
-        <ArrowDown className="w-6 h-6 animate-bounce" />
-      </button>
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <ArrowDown className="w-6 h-6" />
+        </motion.div>
+      </motion.button>
     </section>
   );
 };

@@ -1,110 +1,92 @@
-import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import { Briefcase, Calendar } from "lucide-react";
 
-interface ExperienceItem {
-  role: string;
-  company: string;
-  period: string;
-  description: string;
-}
-
-const experiences: ExperienceItem[] = [
+const experiences = [
   {
-    role: "Lead Product Designer",
-    company: "Forge Studio",
-    period: "2022 — Present",
-    description:
-      "Leading design strategy for a portfolio of B2B SaaS products. Established design systems that reduced development time by 40% while maintaining exceptional user experience standards.",
+    role: "Mechanical Design Intern (AutoCAD)",
+    company: "Academy of Skill Development",
+    period: "Sep 2025 - Oct 2025",
+    description: [
+      "Executed 2D CAD drafting and detailing of residential floor plans using AutoCAD",
+      "Produced dimensioned layout drawings following basic drafting standards",
+      "Improved proficiency in design interpretation and CAD workflow management",
+    ],
   },
   {
-    role: "Senior Designer",
-    company: "Catalyst Digital",
-    period: "2019 — 2022",
-    description:
-      "Spearheaded the redesign of flagship products for enterprise clients. Collaborated with cross-functional teams to ship features that increased user engagement by 65%.",
-  },
-  {
-    role: "Product Designer",
-    company: "Ember Labs",
-    period: "2017 — 2019",
-    description:
-      "Designed end-to-end experiences for mobile and web applications. Built and maintained component libraries that streamlined the design-to-development workflow.",
+    role: "Workshop Coordinator & Volunteer",
+    company: "IoTVerse Club & MDAC, REC Banda",
+    period: "2022 - Present",
+    description: [
+      "Conducted workshops and training sessions across various engineering domains",
+      "Mentored juniors in IoT, CAD design, and embedded systems",
+      "Organized technical events and competitions for 2.5+ years",
+    ],
   },
 ];
 
 const Experience = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section
-      ref={sectionRef}
-      id="experience"
-      className="section-padding px-6 md:px-12 lg:px-20 bg-surface-elevated"
-    >
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
-          {/* Label */}
-          <div className="lg:col-span-3">
-            <span
-              className={`text-muted-foreground text-body-sm font-body tracking-wide uppercase transition-all duration-700 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+    <section ref={ref} id="experience" className="section-padding px-6 bg-secondary/30">
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <span className="text-primary text-body-sm font-body tracking-widest uppercase mb-4 block">
+            Journey
+          </span>
+          <h2 className="font-display text-display-xl">
+            Experience & <span className="text-gradient">Involvement</span>
+          </h2>
+        </motion.div>
+
+        <div className="relative">
+          {/* Timeline line */}
+          <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-primary/50 to-transparent md:-translate-x-1/2" />
+
+          {experiences.map((exp, index) => (
+            <motion.div
+              key={exp.company}
+              initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.6, delay: index * 0.2 }}
+              className={`relative mb-12 last:mb-0 ${
+                index % 2 === 0 ? "md:pr-1/2 md:text-right" : "md:pl-1/2 md:ml-auto"
               }`}
             >
-              Experience
-            </span>
-          </div>
-
-          {/* Content */}
-          <div className="lg:col-span-9">
-            <div className="space-y-16">
-              {experiences.map((exp, index) => (
-                <article
-                  key={exp.company}
-                  className={`group transition-all duration-700 ${
-                    isVisible
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-8"
-                  }`}
-                  style={{ transitionDelay: `${(index + 1) * 150}ms` }}
-                >
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                    <div>
-                      <h3 className="font-display text-xl md:text-2xl text-foreground mb-1">
-                        {exp.role}
-                      </h3>
-                      <p className="text-primary font-body">{exp.company}</p>
-                    </div>
-                    <span className="text-muted-foreground text-body-sm font-body shrink-0">
-                      {exp.period}
-                    </span>
+              {/* Timeline dot */}
+              <div className="absolute left-0 md:left-1/2 top-0 w-4 h-4 rounded-full bg-primary shadow-lg shadow-primary/50 -translate-x-1/2 md:-translate-x-1/2 z-10" />
+              
+              <div className={`ml-8 md:ml-0 ${index % 2 === 0 ? "md:mr-12" : "md:ml-12"}`}>
+                <div className="glass-effect rounded-2xl p-6 hover-lift">
+                  <div className={`flex items-center gap-2 mb-2 ${index % 2 === 0 ? "md:justify-end" : ""}`}>
+                    <Calendar className="w-4 h-4 text-primary" />
+                    <span className="text-primary text-body-sm font-body">{exp.period}</span>
                   </div>
-                  <p className="text-muted-foreground text-body-md font-body max-w-2xl">
-                    {exp.description}
-                  </p>
-                  {index < experiences.length - 1 && (
-                    <div className="mt-16 border-b border-border" />
-                  )}
-                </article>
-              ))}
-            </div>
-          </div>
+                  
+                  <h3 className="font-display text-xl text-foreground mb-1">{exp.role}</h3>
+                  <div className={`flex items-center gap-2 mb-4 ${index % 2 === 0 ? "md:justify-end" : ""}`}>
+                    <Briefcase className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground font-body">{exp.company}</span>
+                  </div>
+                  
+                  <ul className={`space-y-2 ${index % 2 === 0 ? "md:text-right" : ""}`}>
+                    {exp.description.map((item, i) => (
+                      <li key={i} className="text-muted-foreground text-body-sm font-body">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
